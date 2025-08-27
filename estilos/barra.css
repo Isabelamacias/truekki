@@ -53,6 +53,7 @@
       gap: 20px;
       font-size: 22px;
       cursor: pointer;
+      right: 55%;
     }
 
     /* Botón hamburguesa */
@@ -60,7 +61,7 @@
       font-size: 26px;
       cursor: pointer;
       padding: 15px;
-      background: #1e1e2f;
+      background: #000000;
       color: white;
       position: fixed;
       top: 0;
@@ -92,7 +93,7 @@
     }
 
     .sidebar a:hover {
-      background: #333;
+      background: #000000;
     }
 
     .sidebar .close-btn {
