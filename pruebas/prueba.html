@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Perfil Vendedor con Carrusel</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #e6e6e6;
+    }
+
+    /* Botón hamburguesa */
+    .menu-btn {
+      font-size: 26px;
+      cursor: pointer;
+      padding: 15px;
+      background: #1e1e2f;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1001;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #111;
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
+      z-index: 1000;
+    }
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #fff;
+      display: block;
+      transition: 0.3s;
+    }
+    .sidebar a:hover {
+      background: #333;
+    }
+    .sidebar .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 999;
+    }
+
+    /* Encabezado perfil */
+    .perfil {
+      text-align: center;
+      padding: 20px;
+      background: #9cc3e6;
+    }
+    .perfil img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    .perfil h2 {
+      margin: 0;
+    }
+    .descripcion {
+      max-width: 800px;
+      margin: 20px auto;
+      background: #2f5d91;
+      color: white;
+      padding: 15px;
+      border-radius: 15px;
+    }
+
+    /* Carrusel */
+    .carrusel-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px;
+    }
+    .flecha {
+      font-size: 30px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .carrusel {
+      display: flex;
+      gap: 15px;
+    }
+    .producto {
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      width: 150px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .producto:hover {
+      transform: scale(1.05);
+    }
+    .producto img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    /* Detalle producto */
+    .detalle {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: none;
+    }
+
+    /* Estadísticas */
+    .estadisticas {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #9cc3e6;
+      padding: 20px;
+      border-radius: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      text-align: center;
+    }
+    .estadisticas h3 {
+      margin: 0;
+    }
+    .stars {
+      color: gold;
+      font-size: 22px;
+    }
+    .etiquetas span {
+      display: inline-block;
+      background: #2f5d91;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 10px;
+      margin: 3px;
+    }
+
+    /* Comentarios */
+    .comentarios {
+      max-width: 900px;
+      margin: 30px auto;
+    }
+    .comentario {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .comentario strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .calificacion {
+      color: gold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Botón hamburguesa -->
+  <div class="menu-btn" onclick="openMenu()">☰</div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" onclick="closeMenu()">✖</span>
+    <a href="#">Explorar</a>
+    <a href="#">Publicar</a>
+    <a href="#">Favoritos</a>
+    <a href="#">Notificaciones</a>
+    <a href="#">Chat</a>
+    <a href="#">Historial</a>
+    <a href="#">Perfil</a>
+    <a href="#">Ayuda</a>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+  <!-- Perfil -->
+  <div class="perfil">
+    <img src="https://via.placeholder.com/120" alt="Foto Vendedor">
+    <h2>JUAN PÉREZ</h2>
+    <div class="descripcion">
+      JUAN PÉREZ ES UN VENDEDOR DE COMPUTADORES CON MÁS DE 5 AÑOS DE EXPERIENCIA EN EL SECTOR TECNOLÓGICO. 
+      SE ESPECIALIZA EN EQUIPOS DE ESCRITORIO Y PORTÁTILES DE ALTO RENDIMIENTO, OFRECIENDO ASESORÍA PERSONALIZADA A ESTUDIANTES, PROFESIONALES Y GAMERS.
+    </div>
+  </div>
+
+  <!-- Carrusel -->
+  <div class="carrusel-container">
+    <div class="flecha" onclick="prev()">&#10094;</div>
+    <div class="carrusel" id="carrusel"></div>
+    <div class="flecha" onclick="next()">&#10095;</div>
+  </div>
+
+  <!-- Detalle del producto seleccionado -->
+  <div class="detalle" id="detalle"></div>
+
+  <!-- Estadísticas -->
+  <div class="estadisticas">
+    <div>
+      <h3>Calificación</h3>
+      <div class="stars">★★★★★</div>
+    </div>
+    <div>
+      <h3>Total Intercambios</h3>
+      <p><b>35/100</b></p>
+    </div>
+    <div>
+      <h3>Gráfico</h3>
+      <img src="https://via.placeholder.com/300x150" alt="Gráfico">
+    </div>
+    <div class="etiquetas">
+      <h3>Reconocimientos</h3>
+      <span>🏆 Calidad</span>
+      <span>💬 Comunicación</span>
+      <span>🤝 Confiable</span>
+    </div>
+  </div>
+
+  <!-- Comentarios -->
+  <div class="comentarios">
+    <h2>Comentarios</h2>
+    <div class="comentario">
+      <strong>Mari Luz</strong>
+      <p>Muy buena atención, el equipo en muy buenas condiciones y gran variedad de productos. Confiable.</p>
+      <div class="calificacion">★★★★☆</div>
+    </div>
+    <div class="comentario">
+      <strong>Oscar</strong>
+      <p>Muy buena atención, el equipo en muy buenas condiciones.</p>
+      <div class="calificacion">★★★★★</div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    function openMenu() {
+      sidebar.style.width = "250px";
+      overlay.style.display = "block";
+    }
+    function closeMenu() {
+      sidebar.style.width = "0";
+      overlay.style.display = "none";
+    }
+
+    // Productos de ejemplo
+    const productos = [
+      { nombre: "Portátil Gamer ASUS", desc: "ASUS ROG Strix, Ryzen 7, RTX 3060", img: "https://via.placeholder.com/150" },
+      { nombre: "Portátil Lenovo", desc: "Lenovo Legion 5, Ryzen 5, RTX 3050", img: "https://via.placeholder.com/150" },
+      { nombre: "Portátil HP", desc: "HP Omen, i7, RTX 3070", img: "https://via.placeholder.com/150" },
+      { nombre: "Portátil Acer Nitro", desc: "Acer Nitro 5, i5, GTX 1650", img: "https://via.placeholder.com/150" },
+      { nombre: "MacBook Pro", desc: "Apple M1 Pro, 16GB RAM, SSD 512GB", img: "https://via.placeholder.com/150" }
+    ];
+
+    let start = 0;
+    const carrusel = document.getElementById("carrusel");
+    const detalle = document.getElementById("detalle");
+
+    function renderCarrusel() {
+      carrusel.innerHTML = "";
+      const visibles = productos.slice(start, start + 3);
+      visibles.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "producto";
+        div.innerHTML = `<img src="${p.img}" alt="${p.nombre}">
+                         <p>${p.nombre}</p>`;
+        div.onclick = () => mostrarDetalle(p);
+        carrusel.appendChild(div);
+      });
+    }
+
+    function prev() {
+      if (start > 0) {
+        start--;
+        renderCarrusel();
+      }
+    }
+    function next() {
+      if (start < productos.length - 3) {
+        start++;
+        renderCarrusel();
+      }
+    }
+
+    function mostrarDetalle(p) {
+      detalle.style.display = "block";
+      detalle.innerHTML = `<h3>${p.nombre}</h3>
+                           <img src="${p.img}" alt="${p.nombre}" style="width:200px; border-radius:10px;">
+                           <p>${p.desc}</p>`;
+    }
+
+    renderCarrusel();
+  </script>
+
+</body>
+</html>

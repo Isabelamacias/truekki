@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRUEKKI</title>
+  <link rel="stylesheet" href="../estilos/barra.css">
+
+</head>
+<body>
+
+    <div class="menu-btn" onclick="openMenu()">☰</div>
+
+
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" onclick="closeMenu()">✖</span>
+    <a href="#">Explorar</a>
+    <a href="#">Publicar</a>
+    
+    <a href="#">Notificaciones</a>
+  
+    <a href="#">Historial</a>
+    <a href="#">Perfil</a>
+    <a href="#">Ayuda</a>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+  <!-- Barra superior -->
+  <header>
+    <h1>TRUEKKI</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Buscar...">
+      <button>+</button>
+    </div>
+    <div class="icons">
+      <span>♡</span>
+      <span>💬</span>
+      
+    </div>
+  </header>
+
+  <!-- Productos -->
+  <section class="products">
+    <!-- Producto 1 -->
+    <div class="card">
+      <img src="https://i.ibb.co/RNbSpGz/jeans.png" alt="Jeans">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Jeanss Baggy</p>
+    </div>
+
+    <!-- Producto 2 -->
+    <div class="card">
+      <img src="https://i.ibb.co/wwpznVQ/corset.png" alt="Corset">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Corset Cafe</p>
+    </div>
+
+    <!-- Producto 3 -->
+    <div class="card">
+      <img src="https://i.ibb.co/3zWcyQv/laptop.png" alt="Portatil Gamer">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Portatil Gamer</p>
+    </div>
+
+    <!-- Producto 4 -->
+    <div class="card">
+      <img src="https://i.ibb.co/n6hTzXq/libro.png" alt="Libro Cien Años de Soledad">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Libro Original 100 Años de Soledad</p>
+    </div>
+
+    <!-- Producto 5 -->
+    <div class="card">
+      <img src="https://i.ibb.co/2gTWRx7/chaqueta.png" alt="Chaqueta">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Chaqueta</p>
+    </div>
+
+    <!-- Producto 6 -->
+    <div class="card">
+      <img src="https://i.ibb.co/SfjLXLC/libro-antiguo.png" alt="Libro Antiguo">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Libro Antiguo</p>
+    </div>
+
+    <!-- Producto 7 -->
+    <div class="card">
+      <img src="https://i.ibb.co/3ybfbyk/sabanas.png" alt="Juego de sábanas">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Sábanas</p>
+    </div>
+
+    <!-- Producto 8 -->
+    <div class="card">
+      <img src="https://i.ibb.co/qmpFHLt/vestido.png" alt="Vestido">
+      <div class="actions">
+        <span class="heart">❤</span>
+        <span class="cart">💬</span>
+      </div>
+      <p>Vestido de Novia</p>
+    </div>
+  </section>
+  
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    function openMenu() {
+      sidebar.style.width = "250px"; // abre desde la derecha
+      overlay.style.display = "block";
+    }
+
+    function closeMenu() {
+      sidebar.style.width = "0";
+      overlay.style.display = "none";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+
+<style>
+
+
+.menu-btn {
+      font-size: 26px;
+      cursor: pointer;
+      padding: 15px;
+      background: #1e1e2f;
+      color: white;
+      position: fixed;
+      top: 0;
+      right: 0; /* ahora está en el lado derecho */
+      z-index: 1001;
+    }
+
+    /* Sidebar (derecha) */
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      right: 0; /* aparece desde la derecha */
+      background: #111;
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #fff;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background: #333;
+    }
+
+    .sidebar .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 20px; /* ahora el botón queda en la parte izquierda del menú */
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 999;
+    }
+</style>
+
+<div class="menu-btn" onclick="openMenu()">☰</div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" onclick="closeMenu()">✖</span>
+    <a href="#">Explorar</a>
+    <a href="#">Publicar</a>
+    <a href="#">Favoritos</a>
+    <a href="#">Notificaciones</a>
+    <a href="#">Chat</a>
+    <a href="#">Historial</a>
+    <a href="#">Perfil</a>
+    <a href="#">Ayuda</a>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+  </body>
+
+  <script>
+   const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    function openMenu() {
+      sidebar.style.width = "250px"; // abre desde la derecha
+      overlay.style.display = "block";
+    }
+
+    function closeMenu() {
+      sidebar.style.width = "0";
+      overlay.style.display = "none";
+    }
+  </script>
+</html>
