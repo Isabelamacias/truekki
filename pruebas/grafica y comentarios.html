@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Perfil Vendedor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      margin: 20px;
+    }
+
+    /* Tarjeta de perfil */
+    .perfil {
+      background: #c7dff3;
+      padding: 15px;
+      border-radius: 12px;
+      width: 350px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .perfil button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background: #003366;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    /* Bloques */
+    .contenedor {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .bloque {
+      border: 1px solid #000;
+      padding: 10px;
+      text-align: center;
+      margin: 10px;
+    }
+
+    /* Estrellas */
+    .estrellas {
+      font-size: 30px;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .estrella-activa {
+      color: #cddc39;
+    }
+
+    /* Intercambios */
+    .intercambios {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Comentarios */
+    .comentarios {
+      margin-top: 30px;
+    }
+
+    .comentario {
+      display: flex;
+      align-items: center;
+      background: #c7dff3;
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .comentario img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .nuevo-comentario {
+      display: flex;
+      margin-top: 15px;
+    }
+
+    .nuevo-comentario input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .nuevo-comentario button {
+      margin-left: 10px;
+      padding: 8px 15px;
+      background: #003366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="perfil">
+    <p><b>LUIS FERNANDO RAMÍREZ.</b></p>
+    <p>APASIONADO DEL MUNDO GAMER Y DE LA TECNOLOGÍA DE ALTO RENDIMIENTO. 
+       CON MÁS DE 8 AÑOS DE EXPERIENCIA EN LA VENTA Y ENSAMBLE DE COMPUTADORES GAMER, 
+       SE HA GANADO UN LUGAR DE CONFIANZA DENTRO DE LA COMUNIDAD TECNOLÓGICA.</p>
+    <button>VISITAR PERFIL</button>
+  </div>
+
+  <p style="margin-top:15px; color:#003366; font-weight:bold;">
+    ULTIMA ACTUALIZACION <span style="color:black; font-weight:normal;">22/08/25</span>
+  </p>
+
+  <div class="contenedor">
+    <!-- Calificación -->
+    <div class="bloque" style="width:180px;">
+      <div id="estrellas">
+        <span class="estrellas" data-valor="1">&#9733;</span>
+        <span class="estrellas" data-valor="2">&#9733;</span>
+        <span class="estrellas" data-valor="3">&#9733;</span>
+        <span class="estrellas" data-valor="4">&#9733;</span>
+        <span class="estrellas" data-valor="5">&#9733;</span>
+      </div>
+      <p>CALIFICACION</p>
+    </div>
+
+    <!-- Gráfica -->
+    <div class="bloque" style="width:300px;">
+      <canvas id="grafica"></canvas>
+    </div>
+
+    <!-- Intercambios -->
+    <div class="bloque" style="width:200px;">
+      <p>TOTAL INTERCAMBIOS</p>
+      <p class="intercambios">35/100</p>
+      <p>ETIQUETAS DE RECONOCIMIENTO</p>
+      <p>🏆 ⚙️ 💻</p>
+    </div>
+  </div>
+
+  <!-- Sección de comentarios -->
+  <div class="comentarios">
+    <h2>COMENTARIOS.</h2>
+
+    <div id="lista-comentarios">
+      <!-- Comentarios aparecerán aquí -->
+    </div>
+
+    <div class="nuevo-comentario">
+      <input type="text" id="textoComentario" placeholder="Escribe un comentario...">
+      <button onclick="agregarComentario()">Comentar</button>
+    </div>
+  </div>
+
+  <script>
+    // Estrellas de calificación
+    const estrellas = document.querySelectorAll('.estrellas');
+    let calificaciones = [];
+    let chart;
+
+    estrellas.forEach(estrella => {
+      estrella.addEventListener('click', () => {
+        let valor = estrella.getAttribute('data-valor');
+        calificaciones.push(parseInt(valor));
+        actualizarEstrellas(valor);
+        actualizarGrafica();
+      });
+    });
+
+    function actualizarEstrellas(valor) {
+      estrellas.forEach(e => {
+        e.classList.toggle('estrella-activa', e.getAttribute('data-valor') <= valor);
+      });
+    }
+
+    // Gráfica con Chart.js
+    function crearGrafica() {
+      const ctx = document.getElementById('grafica').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["1★", "2★", "3★", "4★", "5★"],
+          datasets: [{
+            label: "Cantidad de calificaciones",
+            data: [0,0,0,0,0],
+            borderColor: "blue",
+            borderWidth: 2,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function actualizarGrafica() {
+      let conteo = [0,0,0,0,0];
+      calificaciones.forEach(c => conteo[c-1]++);
+      chart.data.datasets[0].data = conteo;
+      chart.update();
+    }
+
+    crearGrafica();
+
+    // Comentarios
+    function agregarComentario() {
+      const texto = document.getElementById("textoComentario").value;
+      if (texto.trim() === "") return;
+
+      const lista = document.getElementById("lista-comentarios");
+      const div = document.createElement("div");
+      div.classList.add("comentario");
+      div.innerHTML = `
+        <img src="https://i.pravatar.cc/40" alt="perfil">
+        <p>${texto}</p>
+      `;
+      lista.appendChild(div);
+
+      document.getElementById("textoComentario").value = "";
+    }
+  </script>
+
+</body>
+</html>

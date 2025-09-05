@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TRUEKKI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fff;
+    }
+
+    /* Encabezado */
+    header {
+      background: #000;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .search-bar {
+      flex: 1;
+      margin: 0 20px;
+      background: #f4e9f8;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .header-icons {
+      font-size: 22px;
+      display: flex;
+      gap: 15px;
+    }
+
+    /* Contenedor principal */
+    .container {
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+    }
+
+    /* Galería lateral */
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .gallery img {
+      width: 80px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+    }
+
+    .main-image img {
+      max-width: 500px;
+      border-radius: 10px;
+    }
+
+    /* Detalles producto */
+    .details {
+      flex: 1;
+      background: #cfe0f4;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .details h2 {
+      margin-top: 0;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .price {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: #2e3f5b;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 13px;
+    }
+
+    .btns {
+      margin-top: 15px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .btns button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btns button:first-child {
+      color: red;
+    }
+
+    .btns button:last-child {
+      color: #2e3f5b;
+    }
+
+    /* Mensaje al vendedor */
+    .message-box {
+      margin: 30px 20px;
+      background: #d9e8f8;
+      padding: 20px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 2px solid #000;
+    }
+
+    .message-box span {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .message-input {
+      flex: 1;
+      background: #bcd1eb;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      font-size: 16px;
+      margin-right: 20px;
+    }
+
+    .send-btn {
+      background: #003366;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .send-btn:hover {
+      background: #001f4d;
+    }
+  </style>
+</head>
+<body>
+  <!-- Encabezado -->
+  <header>
+    <h1>TRUEKKI</h1>
+    <input type="text" class="search-bar" placeholder="🔍">
+    <div class="header-icons">
+      <span>♡</span>
+      <span>👤</span>
+      <span>☰</span>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Galería lateral -->
+    <div class="gallery">
+      <img src="https://via.placeholder.com/80" alt="miniatura">
+      <img src="https://via.placeholder.com/80" alt="miniatura">
+      <img src="https://via.placeholder.com/80" alt="miniatura">
+      <img src="https://via.placeholder.com/80" alt="miniatura">
+    </div>
+
+    <!-- Imagen principal -->
+    <div class="main-image">
+      <img src="https://via.placeholder.com/500x350" alt="Producto principal">
+    </div>
+
+    <!-- Detalles -->
+    <div class="details">
+      <h2>PORTÁTIL GAMING ASUS TUF R5 7535H RAM 24GB SSD 512GB</h2>
+      <p>
+        El TUF Gaming es un portátil diseñado para servirte la victoria en bandeja. La nueva GPU GeForce RTX™ 2050 
+        ofrece una gran fluidez gráfica en la pantalla de 144Hz y 100% sRGB, mientras que la potente CPU AMD Ryzen™ 
+        5 se encuentra respaldada por un nuevo sistema de refrigeración que amplía el rendimiento de la CPU y 
+        mantiene un perfil acústico silencioso.
+      </p>
+
+      <div class="price">
+        <b>Precio:</b> $2.899.900
+      </div>
+      <p><b>Ubicación:</b> Bogotá D.C, Suba Lombardia</p>
+
+      <div class="tags">
+        <span class="tag">Electrónicos</span>
+        <span class="tag">Portátil</span>
+        <span class="tag">Gamer</span>
+      </div>
+
+      <div class="btns">
+        <button>❤️ Lista deseos</button>
+        <button>📤 Compartir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje al vendedor -->
+  <div class="message-box">
+    <div>
+      <span>ENVIAR MENSAJE AL VENDEDOR</span>
+      <input type="text" class="message-input" value="Hola, ¿sigue estando disponible?">
+    </div>
+    <button class="send-btn">ENVIAR MENSAJE</button>
+  </div>
+</body>
+</html>
+
+
