@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Notificaciones</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      padding: 20px;
+    }
+
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .notificaciones {
+      margin-top: 20px;
+    }
+
+    .notif {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      color: white;
+      animation: aparecer 0.5s ease-in-out;
+    }
+
+    .push { background: #28a745; }
+    .email { background: #17a2b8; }
+    .sms { background: #ffc107; color: #333; }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔔 Sistema de Notificaciones</h1>
+  <div class="container">
+    <div class="btns">
+      <button onclick="notificar('OFERTA_RECIBIDA')">Oferta Recibida</button>
+      <button onclick="notificar('OFERTA_RESULTADO')">Oferta Aceptada/Rechazada</button>
+      <button onclick="notificar('ENVIO_CAMINO')">Envío en Camino</button>
+      <button onclick="notificar('ENTREGA_CONFIRMADA')">Entrega Confirmada</button>
+      <button onclick="notificar('PAGO_PROCESADO')">Pago Procesado</button>
+    </div>
+
+    <div class="notificaciones" id="notificaciones"></div>
+  </div>
+
+  <script>
+    function crearNotif(tipo, canal, mensaje) {
+      const div = document.createElement("div");
+      div.classList.add("notif", canal);
+      div.textContent = `[${canal.toUpperCase()}] ${mensaje}`;
+      document.getElementById("notificaciones").prepend(div);
+    }
+
+    function notificar(evento) {
+      switch (evento) {
+        case "OFERTA_RECIBIDA":
+          crearNotif(evento, "push", "Tu oferta fue recibida ✅");
+          crearNotif(evento, "email", "Confirmación: tu oferta fue recibida.");
+          break;
+
+        case "OFERTA_RESULTADO":
+          crearNotif(evento, "push", "Tu oferta fue aceptada ❗");
+          crearNotif(evento, "email", "Resultado: tu oferta fue aceptada.");
+          crearNotif(evento, "sms", "Tu oferta fue aceptada.");
+          break;
+
+        case "ENVIO_CAMINO":
+          crearNotif(evento, "push", "Tu pedido está en camino 🚚");
+          crearNotif(evento, "email", "Envío en camino. Tracking: TRK123456");
+          crearNotif(evento, "sms", "Pedido en camino. Tracking: TRK123456");
+          break;
+
+        case "ENTREGA_CONFIRMADA":
+          crearNotif(evento, "push", "Pedido entregado 📦");
+          crearNotif(evento, "email", "Confirmación: tu pedido fue entregado.");
+          break;
+
+        case "PAGO_PROCESADO":
+          crearNotif(evento, "push", "Pago procesado 💳");
+          crearNotif(evento, "email", "Tu pago fue exitoso. Factura #001");
+          break;
+      }
+    }
+  </script>
+</body>
+</html>

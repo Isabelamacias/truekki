@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos con Favoritos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background:#f7f7f7; }
+    h1,h2 { text-align: center; }
+    .productos { display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:16px; }
+    .producto {
+      background:white; border-radius:8px; padding:12px; 
+      box-shadow:0 2px 6px rgba(0,0,0,0.1); position:relative;
+    }
+    .producto img { width:100%; border-radius:8px; }
+    .corazon {
+      position:absolute; top:10px; right:10px; font-size:22px;
+      cursor:pointer; user-select:none;
+    }
+    .corazon.guardado { color:red; }
+    .card {
+      background:white; padding:10px; margin:6px 0;
+      border-radius:6px; display:flex; justify-content:space-between;
+      box-shadow:0 1px 4px rgba(0,0,0,0.1);
+    }
+    .removed { font-size:0.9em; color:#555; }
+  </style>
+</head>
+<body>
+  <h1>🛒 Tienda</h1>
+
+  <!-- Listado de productos -->
+  <div class="productos">
+    <div class="producto" data-id="1" data-title="Camiseta" data-price="20" data-category="Ropa">
+      <img src="https://via.placeholder.com/200x150?text=Camiseta">
+      <div><strong>Camiseta</strong><br>$20</div>
+      <div class="corazon">♡</div>
+    </div>
+    <div class="producto" data-id="2" data-title="Laptop" data-price="800" data-category="Tecnología">
+      <img src="https://via.placeholder.com/200x150?text=Laptop">
+      <div><strong>Laptop</strong><br>$800</div>
+      <div class="corazon">♡</div>
+    </div>
+    <div class="producto" data-id="3" data-title="Zapatos" data-price="50" data-category="Ropa">
+      <img src="https://via.placeholder.com/200x150?text=Zapatos">
+      <div><strong>Zapatos</strong><br>$50</div>
+      <div class="corazon">♡</div>
+    </div>
+  </div>
+
+  <h2>⭐ Mis Favoritos</h2>
+  <div id="favorites"></div>
+
+  <h2>🗑️ Historial eliminados</h2>
+  <div id="removedList"></div>
+
+<script>
+  const FAVORITES_KEY="favoritos";
+  const REMOVED_KEY="historial";
+
+  function loadFavs(){ return JSON.parse(localStorage.getItem(FAVORITES_KEY)||"[]"); }
+  function saveFavs(d){ localStorage.setItem(FAVORITES_KEY, JSON.stringify(d)); }
+  function loadRemoved(){ return JSON.parse(localStorage.getItem(REMOVED_KEY)||"[]"); }
+  function saveRemoved(d){ localStorage.setItem(REMOVED_KEY, JSON.stringify(d)); }
+
+  // Render favoritos
+  function renderFavorites(){
+    const cont=document.getElementById("favorites"); cont.innerHTML="";
+    loadFavs().forEach((f,i)=>{
+      const div=document.createElement("div"); div.className="card";
+      div.innerHTML=`<div><strong>${f.title}</strong> - $${f.price} <em>(${f.category})</em></div>
+        <button onclick="removeFavorite(${i})">Eliminar</button>`;
+      cont.appendChild(div);
+    });
+
+    const removed=document.getElementById("removedList"); removed.innerHTML="";
+    loadRemoved().forEach(r=>{
+      const d=document.createElement("div"); d.className="removed";
+      d.textContent=`${r.title} eliminado el ${r.date}`;
+      removed.appendChild(d);
+    });
+  }
+
+  // Agregar favorito desde producto
+  function toggleFavorite(prodDiv){
+    const id=prodDiv.dataset.id;
+    const title=prodDiv.dataset.title;
+    const price=prodDiv.dataset.price;
+    const category=prodDiv.dataset.category;
+
+    let favs=loadFavs();
+    const exists=favs.find(f=>f.id==id);
+    if(exists){
+      // si ya está -> eliminar
+      favs=favs.filter(f=>f.id!=id);
+      saveFavs(favs);
+      const history=loadRemoved();
+      history.push({...exists,date:new Date().toLocaleString()});
+      saveRemoved(history);
+      prodDiv.querySelector(".corazon").classList.remove("guardado");
+      prodDiv.querySelector(".corazon").textContent="♡";
+    }else{
+      // si no está -> agregar
+      favs.push({id,title,price,category});
+      saveFavs(favs);
+      prodDiv.querySelector(".corazon").classList.add("guardado");
+      prodDiv.querySelector(".corazon").textContent="♥";
+    }
+    renderFavorites();
+  }
+
+  // Iniciar listeners en corazones
+  document.querySelectorAll(".producto").forEach(p=>{
+    const id=p.dataset.id;
+    if(loadFavs().some(f=>f.id==id)){
+      p.querySelector(".corazon").classList.add("guardado");
+      p.querySelector(".corazon").textContent="♥";
+    }
+    p.querySelector(".corazon").addEventListener("click",()=>toggleFavorite(p));
+  });
+
+  // Eliminar desde lista
+  function removeFavorite(index){
+    let favs=loadFavs();
+    const removedItem=favs.splice(index,1)[0];
+    saveFavs(favs);
+    const history=loadRemoved();
+    history.push({...removedItem,date:new Date().toLocaleString()});
+    saveRemoved(history);
+    // actualizar corazón en el grid
+    const prod=document.querySelector(`.producto[data-id="${removedItem.id}"]`);
+    if(prod){
+      prod.querySelector(".corazon").classList.remove("guardado");
+      prod.querySelector(".corazon").textContent="♡";
+    }
+    renderFavorites();
+  }
+
+  renderFavorites();
+</script>
+</body>
+</html>

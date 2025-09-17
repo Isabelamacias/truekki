@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truekki - Lista de Deseos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #222;
+    }
+
+    /* Encabezado */
+    header {
+      background: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      position: relative;
+    }
+    header h2 {
+      margin: 0;
+      flex: 1;
+      font-size: 20px;
+    }
+    .menu-btn {
+      font-size: 22px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+    .search-box {
+      flex: 2;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: none;
+      font-size: 14px;
+    }
+
+    /* Menú lateral */
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
+    }
+    .sidebar a {
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      color: #fff;
+      display: block;
+      transition: 0.2s;
+    }
+    .sidebar a:hover {
+      background: #575757;
+    }
+    .sidebar .closebtn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* Títulos */
+    h1 {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .mensaje {
+      text-align: center;
+      color: #777;
+      margin: 10px 0;
+    }
+
+    .login-box {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .login-box button {
+      background: #111;
+      color: #fff;
+      padding: 12px 24px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .info {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .info-text {
+      flex: 1;
+    }
+    .info-text h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .info-text p {
+      font-size: 14px;
+      margin: 6px 0;
+    }
+
+    .producto {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      max-width: 280px;
+    }
+    .producto img {
+      width: 100%;
+      display: block;
+    }
+    .precio {
+      font-weight: bold;
+      padding: 8px;
+    }
+    .corazon {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      font-size: 22px;
+      cursor: pointer;
+      user-select: none;
+      color: #333;
+    }
+    .corazon.guardado {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <!-- Barra superior -->
+  <header>
+    <span class="menu-btn" onclick="openMenu()">☰</span>
+    <h2>Truekki</h2>
+    <div class="search-box">
+      <input type="text" placeholder="Buscar productos...">
+    </div>
+  </header>
+
+  <!-- Menú lateral -->
+  <div id="sidebar" class="sidebar">
+    <span class="closebtn" onclick="closeMenu()">×</span>
+    <a href="#">Inicio</a>
+    <a href="#">Categorías</a>
+    <a href="#">Mis Favoritos</a>
+    <a href="#">Perfil</a>
+    <a href="#">Cerrar sesión</a>
+  </div>
+
+  <!-- Contenido -->
+  <h1>MI LISTA DE DESEOS</h1>
+  <p class="mensaje">Se encuentra vacío.<br>Personaliza tus compras con tu lista de deseos</p>
+  <div class="login-box">
+    <p>¿Ya tienes artículos guardados?</p>
+    <button>REGISTRARSE/INICIAR SESIÓN</button>
+  </div>
+
+  <div class="info">
+    <div class="info-text">
+      <h2>Dale un corazón</h2>
+      <p>Guarda todo lo que te gusta en una sección.</p>
+      <p>❤️ Piensalo antes de comprar.</p>
+      <p>❤️ Recibe notificaciones cuando un artículo vuelva a estar disponible.</p>
+    </div>
+    <div class="producto" data-id="1" data-title="Collar" data-price="5.00">
+      <img src="https://via.placeholder.com/400x250?text=Collar" alt="Collar">
+      <div class="precio">US$5.00</div>
+      <div class="corazon">♡</div>
+    </div>
+  </div>
+
+  <script>
+    // --- Menú lateral ---
+    function openMenu() {
+      document.getElementById("sidebar").style.width = "250px";
+    }
+    function closeMenu() {
+      document.getElementById("sidebar").style.width = "0";
+    }
+
+    // --- Favoritos ---
+    const FAVORITOS_KEY = "favoritos";
+
+    function loadFavs() {
+      return JSON.parse(localStorage.getItem(FAVORITOS_KEY) || "[]");
+    }
+    function saveFavs(favs) {
+      localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favs));
+    }
+
+    function toggleFav(producto) {
+      const id = producto.dataset.id;
+      const title = producto.dataset.title;
+      const price = producto.dataset.price;
+
+      let favs = loadFavs();
+      const exists = favs.find(f => f.id == id);
+
+      const corazon = producto.querySelector(".corazon");
+
+      if (exists) {
+        favs = favs.filter(f => f.id != id);
+        corazon.classList.remove("guardado");
+        corazon.textContent = "♡";
+      } else {
+        favs.push({ id, title, price });
+        corazon.classList.add("guardado");
+        corazon.textContent = "♥";
+      }
+      saveFavs(favs);
+    }
+
+    document.querySelectorAll(".producto").forEach(prod => {
+      const id = prod.dataset.id;
+      const corazon = prod.querySelector(".corazon");
+      if (loadFavs().some(f => f.id == id)) {
+        corazon.classList.add("guardado");
+        corazon.textContent = "♥";
+      }
+      corazon.addEventListener("click", () => toggleFav(prod));
+    });
+  </script>
+</body>
+</html>

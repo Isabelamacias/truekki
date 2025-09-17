@@ -177,20 +177,6 @@
       font-size: 20px;
       font-weight: bold;
     }
-     .venta {
-      background: white;
-      border: 1px solid #aaa;
-    }
-
-    .trueque {
-      background: white;
-      border: 1px solid #aaa;
-    }
-
-    .venta-trueque {
-      background: #333;
-      color: white;
-    }
 
     .price {
       font-size: 18px;
@@ -276,79 +262,6 @@
     .send-btn:hover {
       background: #001f4d;
     }
-        /* Sección comentarios */
-    .comentarios-container {
-      max-width: 800px;
-      margin: 20px auto;
-    }
-
-    .comentarios-container h2 {
-      margin-bottom: 15px;
-    }
-
-    .comentario {
-      display: flex;
-      align-items: flex-start;
-      background: #fff;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .comentario img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-right: 15px;
-      object-fit: cover;
-      border: 2px solid #ccc;
-    }
-
-    .comentario-texto {
-      flex: 1;
-    }
-
-    .comentario-texto h4 {
-      margin: 0 0 5px;
-      font-size: 15px;
-      color: #333;
-    }
-
-    .comentario-texto p {
-      margin: 0;
-      font-size: 14px;
-      color: #555;
-    }
-
-    .form-comentario {
-      display: flex;
-      margin-top: 20px;
-      gap: 10px;
-    }
-
-    .form-comentario textarea {
-      flex: 1;
-      resize: none;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      font-size: 14px;
-    }
-
-    .form-comentario button {
-      background: #003366;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .form-comentario button:hover {
-      background: #001f4d;
-    }
   </style>
 </head>
 <body>
@@ -388,12 +301,6 @@
         mantiene un perfil acústico silencioso.
       </p>
 
-      <div class="botones">
-        <button class="venta">VENTA</button>
-        <button class="trueque">TRUEQUE</button>
-        <button class="venta-trueque">VENTA O TRUEQUE</button>
-      </div>
-
       <div class="price">
         <b>Precio:</b> $2.899.900
       </div>
@@ -408,6 +315,7 @@
       <div class="btns">
         <button>❤️ Lista deseos</button>
         <button>📤 Compartir</button>
+         <button>Eliminar publicacion</button>
       </div>
     </div>
   </div>
@@ -458,15 +366,6 @@
       <p>🏆 ⚙️ 💻</p>
     </div>
   </div>
-<!--Comentario-->
-  <div class="comentarios-container">
-     <h2>Comentarios</h2> 
-     <div id="comentarios-lista">
-
-     </div> <div class="form-comentario">
-       <textarea id="comentario-input" rows="2" placeholder="Escribe un comentario...">
-
-       </textarea> <button onclick="agregarComentario()">Comentar</button> </div> </div>
 
   
 
@@ -524,81 +423,42 @@
 
     crearGrafica();
 
+    // Comentarios
     function agregarComentario() {
-    const input = document.getElementById("comentario-input");
-    const texto = input.value.trim();
+      const input = document.getElementById("comentario-input");
+      const texto = input.value.trim();
 
-    if (texto === "") return;
+      if (texto !== "") {
+        const lista = document.getElementById("comentarios-lista");
 
-    const lista = document.getElementById("comentarios-lista");
+        const comentario = document.createElement("div");
+        comentario.classList.add("comentario");
 
-    // Crear contenedor del comentario
-    const comentario = document.createElement("div");
-    comentario.classList.add("comentario");
+        // Imagen de perfil
+        const img = document.createElement("img");
+        img.src = "https://i.pravatar.cc/50"; // Foto de perfil random
 
-    // Imagen de perfil (fija por ahora)
-    const img = document.createElement("img");
-    img.src = "https://via.placeholder.com/50"; 
+        // Texto comentario
+        const textoDiv = document.createElement("div");
+        textoDiv.classList.add("comentario-texto");
 
-    // Contenedor texto
-    const comentarioTexto = document.createElement("div");
-    comentarioTexto.classList.add("comentario-texto");
+        const nombre = document.createElement("h4");
+        nombre.textContent = "Usuario Anónimo";
 
-    const nombre = document.createElement("h4");
-    nombre.textContent = "Usuario"; // puedes reemplazar por nombre dinámico
+        const parrafo = document.createElement("p");
+        parrafo.textContent = texto;
 
-    const contenido = document.createElement("p");
-    contenido.textContent = texto;
+        textoDiv.appendChild(nombre);
+        textoDiv.appendChild(parrafo);
 
-    // Botones de acción
-    const acciones = document.createElement("div");
-    acciones.style.marginTop = "8px";
+        comentario.appendChild(img);
+        comentario.appendChild(textoDiv);
 
-    const btnEditar = document.createElement("button");
-    btnEditar.textContent = "Editar";
-    btnEditar.style.marginRight = "10px";
-    btnEditar.style.background = "#ffc107";
-    btnEditar.style.border = "none";
-    btnEditar.style.padding = "5px 10px";
-    btnEditar.style.borderRadius = "6px";
-    btnEditar.style.cursor = "pointer";
+        lista.appendChild(comentario);
 
-    btnEditar.onclick = () => {
-      const nuevoTexto = prompt("Edita tu comentario:", contenido.textContent);
-      if (nuevoTexto !== null && nuevoTexto.trim() !== "") {
-        contenido.textContent = nuevoTexto.trim();
+        input.value = "";
       }
-    };
-
-    const btnEliminar = document.createElement("button");
-    btnEliminar.textContent = "Eliminar";
-    btnEliminar.style.background = "#dc3545";
-    btnEliminar.style.border = "none";
-    btnEliminar.style.padding = "5px 10px";
-    btnEliminar.style.borderRadius = "6px";
-    btnEliminar.style.cursor = "pointer";
-    btnEliminar.style.color = "#fff";
-
-    btnEliminar.onclick = () => {
-      lista.removeChild(comentario);
-    };
-
-    acciones.appendChild(btnEditar);
-    acciones.appendChild(btnEliminar);
-
-    // Insertar todo en el contenedor
-    comentarioTexto.appendChild(nombre);
-    comentarioTexto.appendChild(contenido);
-    comentarioTexto.appendChild(acciones);
-
-    comentario.appendChild(img);
-    comentario.appendChild(comentarioTexto);
-
-    lista.appendChild(comentario);
-
-    // Limpiar textarea
-    input.value = "";
-  }
+    }
   </script>
 
 </body>

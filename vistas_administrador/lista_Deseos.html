@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sistema de Favoritos — PWA (HTML/CSS/JS)</title>
+<meta name="description" content="Favoritos: listas, notificaciones de precio, compartir, offline, historial." />
+<style>
+  /* ---------- Reset & base ---------- */
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --accent:#0069ff; --muted:#6b7280;
+    --success:#16a34a; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{font-family:Inter,system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0; background:var(--bg); color:#111;}
+  .app{max-width:1000px;margin:18px auto;padding:18px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{margin:0;font-size:1.25rem}
+  .controls{display:flex;gap:8px;align-items:center}
+  button{cursor:pointer;border:0;background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;font-weight:600}
+  button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(0,105,255,0.12)}
+  .small{font-size:.85rem;color:var(--muted)}
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:260px 1fr;gap:16px;margin-top:16px}
+  @media (max-width:760px){ .grid{grid-template-columns:1fr} .left{order:2}}
+  .card{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(12,24,50,0.06)}
+  /* ---------- left (listas) ---------- */
+  .left .list-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;margin-bottom:6px}
+  .left .list-item.active{background:linear-gradient(90deg,rgba(0,105,255,0.06),transparent)}
+  .list-actions{display:flex;gap:6px}
+  input[type=text], select, input[type=number]{padding:8px;border-radius:8px;border:1px solid #e6e9ef}
+  .muted{color:var(--muted)}
+  /* ---------- items ---------- */
+  .item-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px;border-radius:10px;border:1px solid #f0f3f7;margin-bottom:8px}
+  .item-left{display:flex;gap:10px;align-items:center}
+  .badge{background:#f0f7ff;color:var(--accent);padding:6px 8px;border-radius:999px;font-weight:700}
+  .meta{font-size:.9rem;color:var(--muted)}
+  .price{font-weight:700}
+  .danger{color:var(--danger)}
+  .success{color:var(--success)}
+  .tiny{font-size:.8rem;padding:6px 8px;border-radius:8px;background:#f7f9fc;border:1px solid #eef4ff}
+  .row{display:flex;gap:8px;align-items:center}
+  /* ---------- footer ---------- */
+  footer{margin-top:16px;text-align:center;color:var(--muted);font-size:.9rem}
+  /* ---------- utility ---------- */
+  .spacer{height:8px}
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Sistema de Favoritos</h1>
+        <div class="small">Guardar items, organizarlos en listas, alertas de precio, compartir e historial — todo con HTML/CSS/JS.</div>
+      </div>
+      <div class="controls">
+        <button id="btnExport">Exportar JSON</button>
+        <button id="btnShareLink" class="ghost">Generar link para compartir</button>
+        <button id="btnImport" class="ghost">Importar JSON</button>
+        <button id="btnNotifyPerm" class="ghost">Permiso notificaciones</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <aside class="left card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <strong>Listas / Categorías</strong>
+          <button id="btnNewList" class="ghost" title="Crear nueva lista">+</button>
+        </div>
+
+        <div id="listsContainer"></div>
+
+        <div class="spacer"></div>
+        <div class="small muted">Acciones</div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button id="btnClearRemoved" class="ghost">Limpiar historial removidos</button>
+          <button id="btnDownloadBackup" class="ghost">Descargar backup</button>
+        </div>
+      </aside>
+
+      <main class="card">
+        <section aria-label="Agregar favorito" style="margin-bottom:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="inputTitle" placeholder="Título del item" style="flex:1" />
+            <input id="inputUrl" placeholder="URL (opcional)" style="flex:1" />
+            <select id="selectList"></select>
+            <input id="inputPrice" type="number" step="0.01" placeholder="Precio actual" style="width:120px" />
+            <input id="inputTarget" type="number" step="0.01" placeholder="Alerta si ≤" style="width:120px" />
+            <button id="btnAdd">Guardar</button>
+          </div>
+          <div class="small muted" style="margin-top:8px">Nota: Para que la alerta de precio funcione sin backend debes actualizar manualmente el precio (editar item -> establecer nuevo precio). Al bajar del objetivo la app enviará notificación.</div>
+        </section>
+
+        <section>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <strong>Items en lista: <span id="currentListName">Default</span></strong>
+            <div class="small muted" id="itemsCount">0 items</div>
+          </div>
+          <div id="itemsContainer"></div>
+        </section>
+
+        <section style="margin-top:12px">
+          <details>
+            <summary><strong>Historial de items removidos</strong></summary>
+            <div id="removedContainer" style="margin-top:8px"></div>
+          </details>
+        </section>
+
+      </main>
+    </div>
+
+    <footer>
+      <div class="small muted">Funciona offline. Exporta/importa para sincronizar entre dispositivos. Notificaciones requieren permiso.</div>
+    </footer>
+  </div>
+
+<script>
+/*
+  Single-file frontend only implementation.
+  Storage: localStorage (clave: 'favApp:data')
+  Data model:
+    {
+      lists: { 'Default': { name:'Default' }, 'Ropa': {...} },
+      items: [ { id: 'uuid', title, url, list, price, targetPrice, createdAt } ],
+      removed: [ { id, title, url, removedAt, list, price } ]
+    }
+*/
+
+// ---------- Helpers ----------
+const STORAGE_KEY = 'favApp:data_v1';
+const UID = () => 'id-' + Math.random().toString(36).slice(2,10);
+const nowISO = () => (new Date()).toISOString();
+function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function loadData(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){
+    const init = { lists: { 'Default': {name:'Default'} }, items: [], removed: [] };
+    saveData(init); return init;
+  }
+  try { return JSON.parse(raw); } catch(e){ console.warn('storage corrupted, reset'); const init = { lists:{ 'Default':{name:'Default'} }, items: [], removed: [] }; saveData(init); return init; }
+}
+
+// tiny UI helpers
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+function el(tag, attrs={}, ...children){ const e = document.createElement(tag); for(let k in attrs) { if(k==='class') e.className=attrs[k]; else if(k.startsWith('on')) e.addEventListener(k.substring(2), attrs[k]); else e.setAttribute(k, attrs[k]); } children.forEach(c=>{ if(typeof c==='string') e.appendChild(document.createTextNode(c)); else if(c) e.appendChild(c); }); return e; }
+
+// ---------- App state ----------
+let DATA = loadData();
+let currentList = Object.keys(DATA.lists)[0] || 'Default';
+
+// ---------- Persistence helpers ----------
+function addList(name){
+  if(!name) return;
+  if(DATA.lists[name]) { alert('Ya existe esa lista'); return; }
+  DATA.lists[name] = { name };
+  saveData(DATA);
+  renderLists();
+  renderSelectLists();
+}
+function renameList(oldName, newName){
+  if(!newName || newName===oldName) return;
+  if(DATA.lists[newName]) { alert('Ya existe una lista con ese nombre'); return; }
+  DATA.lists[newName] = { name: newName };
+  // move items
+  DATA.items.forEach(it => { if(it.list === oldName) it.list = newName; });
+  delete DATA.lists[oldName];
+  if(currentList === oldName) currentList = newName;
+  saveData(DATA); renderAll();
+}
+function removeList(name){
+  if(name === 'Default'){ alert('No puedes eliminar Default'); return; }
+  if(!confirm(`Eliminar lista "${name}" y mover sus items a Default?`)) return;
+  DATA.items.forEach(it => { if(it.list === name) it.list = 'Default'; });
+  delete DATA.lists[name];
+  if(currentList === name) currentList = 'Default';
+  saveData(DATA); renderAll();
+}
+function addItem({title,url,list,price,targetPrice}){
+  if(!title) { alert('Agrega un título'); return; }
+  const it = { id: UID(), title, url, list: list||'Default', price: price==null?null:Number(price), targetPrice: targetPrice==null?null:Number(targetPrice), createdAt: nowISO() };
+  DATA.items.push(it); saveData(DATA);
+  renderAll();
+  enqueueToast('Guardado');
+}
+function removeItem(itemId, reason='Removed by user'){
+  const idx = DATA.items.findIndex(i=>i.id===itemId);
+  if(idx===-1) return;
+  const item = DATA.items.splice(idx,1)[0];
+  DATA.removed.unshift({ id: item.id, title: item.title, url: item.url, removedAt: nowISO(), list: item.list, price: item.price, reason });
+  saveData(DATA); renderAll();
+}
+function restoreRemoved(removedId){
+  const idx = DATA.removed.findIndex(r=>r.id===removedId);
+  if(idx===-1) return;
+  const r = DATA.removed.splice(idx,1)[0];
+  DATA.items.push({ id: r.id, title: r.title, url: r.url, list: r.list||'Default', price: r.price||null, targetPrice: null, createdAt: nowISO() });
+  saveData(DATA); renderAll();
+}
+function updateItemPrice(itemId, newPrice){
+  const it = DATA.items.find(i=>i.id===itemId); if(!it) return;
+  const prev = it.price;
+  it.price = newPrice == null ? null : Number(newPrice);
+  saveData(DATA);
+  renderAll();
+  // check alert
+  if(it.targetPrice != null && it.price != null && it.price <= it.targetPrice){
+    // trigger notification + in-app toast
+    sendPriceNotification(it, prev);
+  }
+}
+function setItemTarget(itemId, target){
+  const it = DATA.items.find(i=>i.id===itemId); if(!it) return;
+  it.targetPrice = target==null?null:Number(target);
+  saveData(DATA); renderAll();
+}
+
+// ---------- UI rendering ----------
+function renderLists(){
+  const container = $('#listsContainer'); container.innerHTML = '';
+  Object.keys(DATA.lists).forEach(name=>{
+    const count = DATA.items.filter(i=>i.list===name).length;
+    const row = el('div',{class:'list-item' + (currentList===name?' active':'' )},
+      el('div',{}, el('div',{}, el('strong',{}, name)), el('div',{class:'small muted'}, `${count} item${count!==1?'s':''}`)),
+      el('div',{class:'list-actions'},
+        el('button',{class:'ghost', onclick:()=>{ const nn=prompt('Nuevo nombre',name); if(nn) renameList(name, nn); }}, '✎'),
+        el('button',{class:'ghost', onclick:()=>{ if(confirm('Eliminar lista?')) removeList(name); }}, '🗑'),
+        el('button',{class:'ghost', onclick:()=>{ currentList = name; renderAll(); }}, 'Abrir')
+      )
+    );
+    container.appendChild(row);
+  });
+}
+function renderSelectLists(){
+  const sel = $('#selectList'); sel.innerHTML = '';
+  Object.keys(DATA.lists).forEach(name=>{
+    const op = document.createElement('option'); op.value = name; op.textContent = name;
+    if(name===currentList) op.selected = true;
+    sel.appendChild(op);
+  });
+  $('#currentListName').textContent = currentList;
+}
+function renderItems(){
+  const cont = $('#itemsContainer'); cont.innerHTML = '';
+  const filtered = DATA.items.filter(i=>i.list===currentList).sort((a,b)=>a.createdAt<b.createdAt?
+
+
+
